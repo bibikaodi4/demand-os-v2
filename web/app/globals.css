@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局字体优先级：优先使用 Google / next/font 注入的变量 */
+:root {
+  /* 注：这些变量由 next/font 在 layout.tsx 中注入 */
+  --font-sans: var(--font-noto, Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial);
+  --font-display: var(--font-orbitron, var(--font-noto));
+}
+
+/* =========================================
+   1. 赛博朋克 / 黑客帝国 基础环境设置
+   ========================================= */
+body {
+  background-color: #000; /* 纯黑深渊背景 */
+  color: #fff;            /* 默认亮色文字 */
+
+  /* 允许页面垂直滚动，避免 detail 页无法下拉的问题 */
+  overflow: auto;
+
+  /* 增加一点点全局的抗锯齿，让细线更清晰 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+}
+
+/* =========================================
+   2. 3D 引擎工具类 (Tailwind v3 核心补充)
+   ========================================= */
+@layer utilities {
+  /* 定义透视距离：决定了 3D 效果的“纵深感” */
+  /* 2000px 适合大屏幕展示，不会变形太严重 */
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+
+  /* 开启 3D 空间：让子元素（卡片）可以在三维空间里旋转 */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  /* 隐藏背部：如果你做翻转卡片，这个很有用 */
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}
+
+/* =========================================
+   3. "隐形" 滚动条 (为了看起来像高科技面板)
+   ========================================= */
+@layer utilities {
+  /* Chrome, Safari, Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* IE, Edge, Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* =========================================
+   4. 可选：全局背景网格 (如果组件里没加，这里可以兜底)
+   ========================================= */
+/* 如果你觉得背景太黑，可以取消下面这段注释，
+给整个网页加一层极其微弱的绿色网格 
+*/
+
+/*
+body::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: 
+    linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+}
+*/
+
+/* 品牌/标题样式：用于鸿亿鸿 标题（示例） */
+.brand-title {
+  font-family: var(--font-display), var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

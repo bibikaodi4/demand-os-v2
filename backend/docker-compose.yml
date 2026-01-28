@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus_password
+      POSTGRES_DB: directus
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+
+  directus:
+    image: directus/directus:11.1.1
+    ports:
+      - "8055:8055"
+    depends_on:
+      - db
+    environment:
+      KEY: "random_key_abc_123"
+      SECRET: "random_secret_xyz_456"
+      DB_CLIENT: "pg"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      DB_DATABASE: "directus"
+      DB_USER: "directus"
+      DB_PASSWORD: "directus_password"
+      ADMIN_EMAIL: "magicyang@example.com"
+      ADMIN_PASSWORD: "wysk1214"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "*"
+      WEBSOCKETS_ENABLED: "true"
+
+      # 可选：用于生成对外链接
+      PUBLIC_URL: "https://admin.cnsubscribe.xyz"
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    depends_on:
+      - directus
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
