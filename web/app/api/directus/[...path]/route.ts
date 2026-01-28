@@ -24,7 +24,7 @@ async function proxyRequest(req: NextRequest, context: any) {
   });
   forwardHeaders.set('x-forwarded-host', url.host);
   forwardHeaders.set('x-forwarded-proto', url.protocol.replace(':', ''));
-  forwardHeaders.set('x-forwarded-for', req.ip || '');
+  forwardHeaders.set('x-forwarded-for', req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '');
 
   // 处理 body：GET/HEAD 不带 body，其他方法尽量以 arrayBuffer 形式转发
   let body: ArrayBuffer | undefined = undefined;
