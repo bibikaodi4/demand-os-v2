@@ -3,9 +3,16 @@ import { useState, useRef, useEffect } from "react";
 import { X, Send } from "lucide-react";
 
 export default function ChatWidget() {
-	const [open, setOpen] = useState<boolean>(() => {
-		try { return localStorage.getItem('chat_open') === '1'; } catch { return false; }
-	});
+	// 初始为 false，避免在初始渲染时读取浏览器 API 导致 SSR 与客户端输出不一致。
+	const [open, setOpen] = useState<boolean>(false);
+
+	// 在客户端挂载后再从 localStorage 恢复状态。
+	useEffect(() => {
+		try {
+			const val = localStorage.getItem('chat_open') === '1';
+			setOpen(val);
+		} catch {}
+	}, []);
 	const [messages, setMessages] = useState<{id:number, from:'user'|'bot', text:string, time:number}[]>([]);
 	const [input, setInput] = useState("");
 	const [isTyping, setIsTyping] = useState(false);

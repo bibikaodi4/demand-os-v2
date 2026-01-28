@@ -26,6 +26,16 @@ async function proxyRequest(req: NextRequest, context: any) {
   forwardHeaders.set('x-forwarded-proto', url.protocol.replace(':', ''));
   forwardHeaders.set('x-forwarded-for', req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '');
 
+  // 如果没有 Authorization 且服务器端配置了静态 token，则自动补充
+  try {
+    const staticToken = process.env.DIRECTUS_STATIC_TOKEN;
+    if (staticToken && !forwardHeaders.has('authorization')) {
+      forwardHeaders.set('authorization', `Bearer ${staticToken}`);
+    }
+  } catch (e) {
+    // 忽略在无法访问 process.env 时的错误（如 edge runtime），客户端应自行传 token
+  }
+
   // 处理 body：GET/HEAD 不带 body，其他方法尽量以 arrayBuffer 形式转发
   let body: ArrayBuffer | undefined = undefined;
   if (req.method !== 'GET' && req.method !== 'HEAD') {
